@@ -54,8 +54,17 @@ def delete(request,id):
 
 def more(request,id):
     blog = get_object_or_404(Blog, pk = id)
+    print(blog.body)
     comments = Comment.objects.filter(blog =  blog.id)
-    return render(request, "more.html",{"blog":blog, "comments":comments})
+    body = blog.body
+    body_word = body.split()
+    blog_body = ""
+    for word in body_word:
+        if word[0] !='#':
+            blog_body +=word
+            blog_body +=' '
+
+    return render(request, "more.html",{"blog":blog, "comments":comments,'blog_body':blog_body})
 
 def back(request,id):
     blog = get_object_or_404(Blog, pk = id)
