@@ -1,0 +1,79 @@
+{% load blog_extras %}
+{% load static %}
+<html lang = "en">
+    <head>
+        <meta charset="UTF - 8">
+        <title>Docuument</title>
+        <style>
+            #select{
+                display : inline-block;
+                width : 100px;
+                overflow : hidden;
+                text-overflow : ellipsis;
+                white-space : nowrap;
+            }
+            </style>
+            <style>
+                .liking{
+                    color:red !important;
+                }
+                .unlike{
+                    color:black !important;
+                }
+            </style>
+   
+    </head>
+    <body>
+     {% if user.is_authenticated %}
+        <a> {{user.username}}님 반갑습니다</a>
+        <a href  = "{% url 'create' %}"><button>글쓰기</button></a>
+        <form action = "{% url 'sign_out' %}" method="POST">
+            {% csrf_token %}
+            <input type = "submit" value="로그아웃">
+        </form>
+        {% for hasht in hashts %}
+        <hr>
+        {% endif %}
+        <h1 id = "select">{{ hasht.title }}</h1>
+        <p>{{hasht.time}}</p>
+        <p>{{hasht.body}}</p>
+        <p>{{hasht.name}}</p>
+        {% endfor %}
+     {% else %}
+        <a href = "{% url 'sign_in' %}">로그인</a>
+        <a href = "{% url 'sign_up' %}">회원가입</a>
+        {% for blog in blogs %}
+        <hr>
+        {% if blog.image.url is not None %}
+        <img src = "{{ blog.image.url}}" alt ="" width="500px">
+        {% endif %}
+        <h1 id = "select">{{ blog.title }}</h1>
+        <p>{{blog.time}}</p>
+        <p>{{blog.body}}</p>
+        <p>{{blog.name}}</p>
+        <a href = "{% url 'sign_in' %}"><button>더 보기</button></a>
+        {% endfor %}
+     {% endif %}
+     <script src = https://code.jquery.com/jquery-3.5.0.min.js></script>
+     <script>
+        $(document).on('click','.like', function(){
+            var pk = $(this).attr('name');
+            $.ajax({
+                type:"POST",
+                url: "{% url 'like' %}",
+                data: {'pk': pk, 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+                dataType:'json',
+                success:function(response){
+                    alert(response.message);
+                    var users = $(pk).text();
+                    $("input.like[name=" + pk + "]").toggleClass('liking unlike');
+                },error:function(request, status, error){
+                    alert("전송실패");
+                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+
+                },
+            });
+        });
+       </script>
+    </body>
+</html>

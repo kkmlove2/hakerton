@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% block header %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+<h1>{{ blog.title }}</h1>
+<p>작성 시간 : {{ blog.time }}</p>
+<p>{{ blog.body }}</p>
+<p>{{ blog.name }}</p>
+<a href = "{% url 'blog_update' blog.id %}"><button>수정</button></a>
+<a href = "{% url 'delete' blog.id %}"><button>삭제</button></a>
+<a href="{% url 'main' %}">홈으로</a>
+<label for="comment_content">댓글</label><br>
+{% for comment in comments %}
+<p>{{ comment.commentbody }}</p>
+{% endfor %}
+<form action="{% url 'comment' blog.id %}" method="POST">
+  {% csrf_token %}
+      <input type="text" name="commentbody">
+    <button type="submit">댓글쓰기</button>
+    </form>
+</body>
+</html>
+{% endblock %}
+
