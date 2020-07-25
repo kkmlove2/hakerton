@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load blog_extras %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,26 +17,29 @@
             text-overflow : ellipsis;
             white-space : nowrap;
         }
-        </style>
-         <style>
-            .liking{
+
+        .liking{
                 color:red !important;
-            }
-            .unlike{
+        }
+        .unlike{
                 color:black !important;
-            }
+        }
+
+     
+
         </style>
 
 </head>
 <body>
     <br>
 <br>
+
 {% if user.is_authenticated %}
 <p>{{ user.username }}님 환영합니다</p>
 <a href="{% url 'logout' %}"><button>로그아웃</button></a>
 <a href="{% url 'change' %}"><button>유저 정보수정</button></a>
 <a href = "{% url 'new' %}"><button>글 쓰기</button></a>
-{% for blog in blogs%}
+{% for blog in page_posts%}
 <form action = "{% url 'search' blog.id %}">
     <input type = "text" name = "search">
     <button type = "submit">검색</button>
@@ -63,7 +67,7 @@
 {% else %}
 <a href="{% url 'signup' %}"><button>회원가입</button></a>
 <a href="{% url 'login' %}"><button>로그인</button></a>
-{% for blog in blogs %}
+{% for blog in page_posts %}
 <h1>{{ blog.title }}</h1>
 {{ blog|add_link|safe|linebreaksbr }}
 <p id = "select">{{ blog.body }}</p>
@@ -74,6 +78,18 @@
 {% endfor %}
 
 {% endif %}
+<ul>
+    {%if page_posts.has_previous%}
+        <li><a href="?page={{page_posts.previous_page_number}}">이전</a></li>
+    {%endif%}
+    {%for i in page_posts.paginator.page_range%} 
+        <li><a href="?page={{i}}">{{i}}</a></li> 
+    {%endfor%}
+ 
+    {%if page_posts.has_next%}
+       <li><a href="?page={{page_posts.next_page_number}}">다음</a></li> 
+    {%endif%} 
+</ul> 
 <script src = https://code.jquery.com/jquery-3.5.0.min.js></script>
     <script>
        $(document).on('click','.like', function(){
@@ -95,10 +111,8 @@
            });
        });
       </script>
-                          {% endblock %}
+
+{% endblock %}
 
 </body>
 </html>
-
-
-

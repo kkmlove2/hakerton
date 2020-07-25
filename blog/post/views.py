@@ -8,8 +8,12 @@ from.forms import BlogPost
 # Create your views here.
 
 def main(request):
-    blogs = Blog.objects.all
-    return render(request, 'main.html',{"blogs":blogs})
+    blogs = Blog.objects.all().order_by('-id')
+    paginator=Paginator(blogs,3)
+    page = request.GET.get('page')
+    page_posts = paginator.get_page(page)
+    return render(request, 'main.html',{"page_posts":page_posts})
+
 
 def new (request):
     return render(request, "new.html")
