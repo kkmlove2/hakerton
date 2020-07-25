@@ -1,5 +1,6 @@
 {% load blog_extras %}
 {% load static %}
+<!DOCTYPE html>
 <html lang = "en">
     <head>
         <meta charset="UTF - 8">
@@ -24,56 +25,72 @@
    
     </head>
     <body>
-     {% if user.is_authenticated %}
-        <a> {{user.username}}님 반갑습니다</a>
-        <a href  = "{% url 'create' %}"><button>글쓰기</button></a>
-        <form action = "{% url 'sign_out' %}" method="POST">
-            {% csrf_token %}
-            <input type = "submit" value="로그아웃">
-        </form>
-        {% for hasht in hashts %}
-        <hr>
-        {% endif %}
-        <h1 id = "select">{{ hasht.title }}</h1>
-        <p>{{hasht.time}}</p>
-        <p>{{hasht.body}}</p>
-        <p>{{hasht.name}}</p>
-        {% endfor %}
-     {% else %}
-        <a href = "{% url 'sign_in' %}">로그인</a>
-        <a href = "{% url 'sign_up' %}">회원가입</a>
-        {% for blog in blogs %}
-        <hr>
-        {% if blog.image.url is not None %}
-        <img src = "{{ blog.image.url}}" alt ="" width="500px">
-        {% endif %}
-        <h1 id = "select">{{ blog.title }}</h1>
-        <p>{{blog.time}}</p>
-        <p>{{blog.body}}</p>
-        <p>{{blog.name}}</p>
-        <a href = "{% url 'sign_in' %}"><button>더 보기</button></a>
-        {% endfor %}
-     {% endif %}
-     <script src = https://code.jquery.com/jquery-3.5.0.min.js></script>
-     <script>
-        $(document).on('click','.like', function(){
-            var pk = $(this).attr('name');
-            $.ajax({
-                type:"POST",
-                url: "{% url 'like' %}",
-                data: {'pk': pk, 'csrfmiddlewaretoken':'{{ csrf_token }}'},
-                dataType:'json',
-                success:function(response){
-                    alert(response.message);
-                    var users = $(pk).text();
-                    $("input.like[name=" + pk + "]").toggleClass('liking unlike');
-                },error:function(request, status, error){
-                    alert("전송실패");
-                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            <br>
+        <br>
+        {% if user.is_authenticated %}
+        <p>{{ user.username }}님 환영합니다</p>
+        <a href="{% url 'logout' %}"><button>로그아웃</button></a>
+        <a href="{% url 'change' %}"><button>유저 정보수정</button></a>
+        <a href = "{% url 'new' %}"><button>글 쓰기</button></a>
+        {% for hasht in hashts%}
+            <h1>{{hasht.title}}</h1>
+            {{ hasht|add_link|safe|linebreaksbr }}
+            <p id = "select">{{ hasht.body }}</p>
+            <p>작성시간 : {{hasht.time}} </p>
+            <p>{{ hasht.name }}</p>
+        
+        <p>{{ hasht.writer}}</p>
+            {% if user.username == blog.writer %}
+            {% endif %}
 
-                },
-            });
-        });
-       </script>
-    </body>
+            
+            <a href = "{% url 'more' hasht.id %}"><button>더 보기</button></a>
+            
+            
+            {% if user in blog.likes.all %}
+                <input type = "button" class = "like liking" name = "{{blog.id}}" value="좋아요">
+            {% else %}
+                <input type = "button" class = "like unlike" name = "{{blog.id}}" value="좋아요">
+            {% endif %}
+            <hr>
+        {% endfor %}
+        
+        
+        {% else %}
+        <a href="{% url 'signup' %}"><button>회원가입</button></a>
+        <a href="{% url 'login' %}"><button>로그인</button></a>
+        {% for blog in blogs %}
+        <h1>{{ blog.title }}</h1>
+        {{ blog|add_link|safe|linebreaksbr }}
+        <p id = "select">{{ blog.body }}</p>
+        <p>{{ blog.name }}</p>
+        <p>{{ blog.time }}</p>
+        <p>{{ blog.writer}}</p>
+        <a href = "{% url 'login'%}"><button>더 보기</button></a>
+        {% endfor %}
+        
+        {% endif %}
+        <script src = https://code.jquery.com/jquery-3.5.0.min.js></script>
+            <script>
+               $(document).on('click','.like', function(){
+                   var pk = $(this).attr('name');
+                   $.ajax({
+                       type:"POST",
+                       url: "{% url 'like' %}",
+                       data: {'pk': pk, 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+                       dataType:'json',
+                       success:function(response){
+                           alert(response.message);
+                           var users = $(pk).text();
+                           $("input.like[name=" + pk + "]").toggleClass('liking unlike');
+                       },error:function(request, status, error){
+                           alert("전송실패");
+                           alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+        
+                       },
+                   });
+               });
+              </script>
+        
+        </body>
 </html>

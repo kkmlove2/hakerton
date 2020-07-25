@@ -4,7 +4,7 @@ from .models import Blog
 class BlogPost(forms.ModelForm):
     class Meta:
         model = Blog
-        fields = ["title", "body", "image"]
+        fields = ["title", "body"]
         widgets = {
             'title' : forms.TextInput(attrs ={'class' : 'form_title','placeholder':'30자 이내로 입력 가능합니다.'}),
             'body' : forms.TextInput(attrs={'class' : 'form_body'}),
@@ -12,10 +12,8 @@ class BlogPost(forms.ModelForm):
         lables = {
             'title' : '제목',
             'body' : '내용',
-            'image' : '사진',
         }
         required = {
-            'image' : False,
         }
 
 def __init__(self, *args, **kwargs):

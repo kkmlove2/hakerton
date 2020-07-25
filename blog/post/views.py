@@ -26,9 +26,9 @@ def create(request):
             for word in body_words:
                 if word[0] == "#":
                     tag = Hashtag.objects.get_or_create(content=word)
-                    blog.hashtag.add(tag[0])
-            return redirect('home')
-        return redirect('home')
+                    blog.hashtags.add(tag[0])
+            return redirect('main')
+        return redirect('main')
     elif request.method == 'GET':
         form = BlogPost()
         return render(request, "new.html",{"form":form})
